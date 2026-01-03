@@ -12,7 +12,9 @@ const sidebar = document.querySelector("[data-sidebar]");
 const sidebarBtn = document.querySelector("[data-sidebar-btn]");
 
 // sidebar toggle functionality for mobile
-sidebarBtn.addEventListener("click", function () { elementToggleFunc(sidebar); });
+if (sidebar && sidebarBtn) {
+  sidebarBtn.addEventListener("click", function () { elementToggleFunc(sidebar); });
+}
 
 
 
@@ -139,20 +141,57 @@ for (let i = 0; i < formInputs.length; i++) {
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
 
+console.log("=== NAVIGATION SETUP ===");
+console.log("Links found:", navigationLinks.length);
+console.log("Pages found:", pages.length);
+
+// List all buttons
+navigationLinks.forEach((link, index) => {
+  console.log(`Button ${index}: "${link.innerHTML}"`);
+});
+
+// List all pages
+pages.forEach((page, index) => {
+  console.log(`Page ${index}: "${page.dataset.page}" - has active: ${page.classList.contains('active')}`);
+});
+
 // add event to all nav link
 for (let i = 0; i < navigationLinks.length; i++) {
   navigationLinks[i].addEventListener("click", function () {
-
-    for (let i = 0; i < pages.length; i++) {
-      if (this.innerHTML.toLowerCase() === pages[i].dataset.page) {
-        pages[i].classList.add("active");
-        navigationLinks[i].classList.add("active");
-        window.scrollTo(0, 0);
-      } else {
-        pages[i].classList.remove("active");
-        navigationLinks[i].classList.remove("active");
+    console.log("\n=== BUTTON CLICKED ===");
+    const clickedText = this.innerHTML.toLowerCase().trim();
+    console.log("Clicked button text:", clickedText);
+    
+    // Remove active class from all pages
+    pages.forEach(page => {
+      page.classList.remove("active");
+      console.log(`Removed active from: ${page.dataset.page}`);
+    });
+    
+    // Remove active class from all nav links
+    navigationLinks.forEach(link => {
+      link.classList.remove("active");
+    });
+    
+    // Add active to clicked button
+    this.classList.add("active");
+    console.log("Added active to button:", clickedText);
+    
+    // Find and activate matching page
+    let pageFound = false;
+    pages.forEach(page => {
+      if (page.dataset.page === clickedText) {
+        page.classList.add("active");
+        pageFound = true;
+        console.log(`✓ Activated page: ${page.dataset.page}`);
+        console.log("Page display:", window.getComputedStyle(page).display);
       }
+    });
+    
+    if (!pageFound) {
+      console.error(`✗ No page found with data-page="${clickedText}"`);
     }
-
+    
+    window.scrollTo(0, 0);
   });
 }
